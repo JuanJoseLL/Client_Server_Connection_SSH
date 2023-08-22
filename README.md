@@ -34,11 +34,17 @@ The **`Client`** class interacts with a server using Ice technology and performs
 - **`main(String[] args)`**: Entry point of the program. Initializes communication with the server, displays an interactive menu, and lets the user select tests to execute.
 - **`sendMessage(Demo.PrinterPrx twoway, Scanner sc)`**: Sends a custom message to the server and displays the response. Allows the user to write messages or "exit" to quit.
 - **`testThroughput(Demo.PrinterPrx twoway, Scanner sc)`**: Conducts throughput tests by simulating a defined number of transactions and calculating throughput in transactions per second.
+- ![img_1.png](img/img_1.png)
 - **`testResponseTime(Demo.PrinterPrx twoway, Scanner sc)`**: Conducts response time tests by measuring individual response times for a defined number of transactions and calculating the average response time.
+- ![img_2.png](img/img_2.png)
 - **`testMissingRate(Demo.PrinterPrx twoway, Scanner sc)`**: Performs tests to calculate the missing event rate by monitoring how many events fail to receive a successful response.
+- ![img_3.png](img/img_3.png)
 - **`testUnprocessedRate(Demo.PrinterPrx twoway, Scanner sc)`**: Performs tests to calculate the unprocessed event rate by simulating the sending of transactions and measuring how many remain pending for processing.
+- ![img.png](img/img.png)
 - **`getUsernameAndHostname()`**: Retrieves the username and local host name.
 
+### **Conclusion**
+- Given the output values we can conclude that the deployment achieved successfully all the quality attributes presented above.  
 ## **Class `Server`**
 
 The **`Server`** class is responsible for starting the server using Ice. It creates an object adapter and a **`PrinterI`** object that implements the **`Demo.Printer`** interface to perform operations and display system-related information.
