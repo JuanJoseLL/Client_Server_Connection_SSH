@@ -13,6 +13,7 @@ public class Client {
             if (twoway == null) {
                 throw new Error("Invalid proxy");
             }
+
             Scanner sc = new Scanner(System.in);
             boolean flag = true;
 
@@ -61,8 +62,8 @@ public class Client {
             String prefix = getUsernameAndHostname();
             String fullMessage = prefix + ": " + message;
 
-            twoway.printString(fullMessage);
-            System.out.println("Response from server: " + fullMessage);
+            String a= twoway.printString(fullMessage);
+            System.out.println("Response from server: " + a);
         } else {
             flag = false;
         }

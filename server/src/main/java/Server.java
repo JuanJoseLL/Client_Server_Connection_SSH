@@ -15,31 +15,19 @@ public class Server
                 for(String v:extraArgs){
                     System.out.println(v);
                 }
+            }else{
+                com.zeroc.Ice.ObjectAdapter adapter = communicator.createObjectAdapter("Callback.Server");
+                adapter.add(new CallbackSenderImpl(), com.zeroc.Ice.Util.stringToIdentity("callbackSender"));
+                adapter.activate();
+
+                communicator.waitForShutdown();
             }
+
             com.zeroc.Ice.ObjectAdapter adapter = communicator.createObjectAdapter("Printer");
             com.zeroc.Ice.Object object = new PrinterI();
             adapter.add(object, com.zeroc.Ice.Util.stringToIdentity("SimplePrinter"));
             adapter.activate();
             communicator.waitForShutdown();
-        }
-    }
-
-    public static void f(String m)
-    {
-        String str = null, output = "";
-
-        InputStream s;
-        BufferedReader r;
-
-        try {
-            Process p = Runtime.getRuntime().exec(m);
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream())); 
-            while ((str = br.readLine()) != null) 
-            output += str + System.getProperty("line.separator"); 
-            br.close(); 
-        }
-        catch(Exception ex) {
         }
     }
 

@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 
 public class PrinterI implements Demo.Printer
 {
-    public void printString(String s, com.zeroc.Ice.Current current) {
+    public String printString(String s, com.zeroc.Ice.Current current) {
         boolean flag = false;
         int num = 0;
         String[] parts=s.split(": ",2);
@@ -18,17 +18,18 @@ public class PrinterI implements Demo.Printer
             flag=false;
         }
         if(flag){
-            System.out.println(username+": "+primeFactors(num));
+           return (primeFactors(num));
         }
         if(content.matches("listports")){
-            System.out.println(username+"\n "+executeCommand("nmap localhost"));
+             return (executeCommand("nmap localhost"));
         } else if (content.matches("listifs")) {
             System.out.println(username+"\n");
-            System.out.println(username+"\n "+executeCommand("ifconfig"));
+            return (executeCommand("ifconfig"));
         } else if (content.startsWith("!")){
             String command = content.substring(1).trim();
-            System.out.println(executeCommand(command));
+            return (executeCommand(command));
         }
+        return "";
 
     }
     private String executeCommand(String command) {

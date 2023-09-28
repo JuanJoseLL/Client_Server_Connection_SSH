@@ -1,0 +1,4 @@
+Error: Unable to initialize main class Server
+Caused by: java.lang.NoClassDefFoundError: com/zeroc/Ice/Object
+Error: Unable to initialize main class Server
+Caused by: java.lang.NoClassDefFoundError: com/zeroc/Ice/Object
