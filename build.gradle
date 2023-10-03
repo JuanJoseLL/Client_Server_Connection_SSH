@@ -17,7 +17,7 @@ subprojects {
     //
     slice {
         java {
-            files = [file("../Printer.ice")]
+            files = [file("../Callback.ice")]
         }
     }
  
