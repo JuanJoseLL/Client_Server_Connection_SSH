@@ -75,28 +75,30 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
     }
 
     @Override
-    public String mtoX(String hostnameFrom ,String hostnameTo, String message, Current current) {
+    public String mtoX(String hostnameTo, String message, Current current) {
         CallbackReceiverPrx receiver = registeredClients.get(hostnameTo);
-        if(registeredClients.get(hostnameTo)==null){
-            System.out.println("hola");
-            String state="Hostname "+hostnameTo+"no esta registrado";
-           return state;
-        } else {
-            String answer = "El host "+hostnameFrom +"dice "+message;
-            return receiver.callback(answer);
-        }
+            String answer = message;
+            String mens="vacio";
+            if(receiver.callback(answer)==null){
+            System.out.println("nulo");
+            }else {
+
+                System.out.println("entro"+receiver.callback(answer));
+                 mens=receiver.callback(answer);
+            }
+
+            return mens;
     }
 
 
     @Override
-    public String mBC(String hostnameFrom , String message,Current current) {
+    public String mBC( String message,Current current) {
         Set<String> hostnames = registeredClients.keySet();
-            String answer=" ";
+            String answer="";
         for (String host : hostnames) {
             CallbackReceiverPrx receiver = registeredClients.get(host);
-            answer += "El host "+hostnameFrom +"les dice"+receiver.callback(message);
+            answer += receiver.callback(message)+"\n";
         }
-
         return answer;
 
     }

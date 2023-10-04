@@ -14,8 +14,8 @@ module Demo
         void message(int a);
         bool registerClients(string a, CallbackReceiver* proxy);
         string listClients();
-        string mtoX(string hostnameFrom, string hostnameTo, string message);
-        string mBC(string hostnameFrom,string message);
+        string mtoX(string hostnameTo, string message);
+        string mBC(string message);
     }
     interface Printer
         {

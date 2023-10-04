@@ -42,7 +42,6 @@ public class Client {
         {
             try
             {
-                System.out.println("Elija una opcion del menu");
                 System.out.print("==> ");
                 System.out.flush();
                 opt = in.readLine();
@@ -55,7 +54,7 @@ public class Client {
                     System.out.println("Introduzca el nombre del host");
                     String host = in.readLine();
                     sender.registerClients(host, receiver);
-                    if(sender.registerClients(host,receiver)){
+                    if(sender.registerClients(host,receiver)==true){
                         System.out.println("Host registrado");
                     }else{
                     System.out.println("Host no registrado");
@@ -63,8 +62,14 @@ public class Client {
                 }
                 else if(opt.equals("2"))
                 {
-                    System.out.println("Enviar mensaje (to *hostname*, BC *broadcast*)");
-                    sendMessage(in,sender);
+                    sender.registerClients("juanjo", receiver);
+                    sender.registerClients("svak", receiver);
+                    sender.registerClients("akira", receiver);
+
+                    sendMessage(in, sender);
+
+
+
                 }
                 else if(opt.equals("3"))
                 {}
@@ -93,17 +98,24 @@ public class Client {
     }
 
     public static void sendMessage(BufferedReader in, Demo.CallbackSenderPrx sender) throws IOException {
-        System.out.println("Ingrese el mensaje a enviar ");
+        System.out.print("Enter a message to send: ");
         String message = in.readLine();
         String prefix = getUsernameAndHostname();
         String hostname = java.net.InetAddress.getLocalHost().getHostName();
         if (message.matches("list clients")){
             System.out.println(prefix+"/Hostnames: "+sender.listClients());
         }else if(message.startsWith("to")){
-            sender.mtoX(hostname, prefix, message);
+            String[] parts=message.split(" ",3);
+            String hostnameTo=parts[1];
+            hostnameTo=hostnameTo.replace(":", "");
+            String mess = parts[2];
+            System.out.println(sender.mtoX(hostnameTo, mess));
         } else if(message.startsWith("BC")) {
-            sender.mBC(hostname, message);
+            String[] parts=message.split(" ",2);
+            String mess=parts[1];
+            System.out.println(sender.mBC(mess));
         }
+
     }
 
     private static String getUsernameAndHostname() {
