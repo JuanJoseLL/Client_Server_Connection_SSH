@@ -3,15 +3,19 @@
 module Demo
 {
     interface CallbackReceiver{
-        void callback();
+        string callback(string message);
+
+
     }
 
     interface CallbackSender{
         void initiateCallback(CallbackReceiver* proxy);
         void shutdown();
         void message(int a);
-        void registerClients(string a, CallbackReceiver* proxy);
+        bool registerClients(string a, CallbackReceiver* proxy);
         string listClients();
+        string mtoX(string hostnameFrom, string hostnameTo, string message);
+        string mBC(string hostnameFrom,string message);
     }
     interface Printer
         {

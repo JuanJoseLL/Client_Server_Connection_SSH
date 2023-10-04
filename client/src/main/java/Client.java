@@ -14,25 +14,17 @@ public class Client {
             communicator.getProperties().setProperty("Ice.Default.Package", "com.zeroc.demos.Ice.callback");
 
             if(!extraArgs.isEmpty())
-            {
-                System.err.println("too many arguments");
-
-            }
+            {System.err.println("too many arguments");}
             else
-            {
-                String status = run(communicator);
-            }
+            {String status = run(communicator);}
         }
-
     }
-
     public static String run(com.zeroc.Ice.Communicator communicator) {
 
         String mes = "entro al metodo run";
         CallbackSenderPrx sender = CallbackSenderPrx.checkedCast(
                 communicator.propertyToProxy("CallbackSender.Proxy")).ice_twoway().ice_timeout(-1).ice_secure(false);
         if(sender == null)
-
         {
             System.err.println("invalid proxy");
             return "invalid proxy";
@@ -40,89 +32,80 @@ public class Client {
         com.zeroc.Ice.ObjectAdapter adapter = communicator.createObjectAdapter("Callback.Client");
         adapter.add(new CallbackReceiverImpl(), com.zeroc.Ice.Util.stringToIdentity("callbackReceiver"));
         adapter.activate();
-
         CallbackReceiverPrx receiver =
                 CallbackReceiverPrx.uncheckedCast(adapter.createProxy(
                         com.zeroc.Ice.Util.stringToIdentity("callbackReceiver")));
-
         java.io.BufferedReader in = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));
         String opt = null;
         menu();
-
         do
         {
             try
             {
+                System.out.println("Elija una opcion del menu");
                 System.out.print("==> ");
                 System.out.flush();
                 opt = in.readLine();
                 if(opt == null)
-                {
-                    break;
-                }
+                {break;}
+
                 if(opt.equals("1"))
                 {
+                    System.out.println("Registrar host");
                     System.out.println("Introduzca el nombre del host");
                     String host = in.readLine();
                     sender.registerClients(host, receiver);
+                    if(sender.registerClients(host,receiver)){
+                        System.out.println("Host registrado");
+                    }else{
+                    System.out.println("Host no registrado");
+                }
                 }
                 else if(opt.equals("2"))
                 {
+                    System.out.println("Enviar mensaje (to *hostname*, BC *broadcast*)");
                     sendMessage(in,sender);
                 }
                 else if(opt.equals("3"))
-                {
-                    // Nothing to do
-                }
+                {}
                 else if(opt.equals("4"))
-                {
-                    menu();
-                } else if (opt.equals("5")) {
+                {} else if (opt.equals("5")) {
                     String b = in.readLine();
                     int a = Integer.parseInt(b);
-                    sender.message(a);
-                } else
-                {
-                    System.out.println("unknown command " + opt + "'");
-                    menu();
-                }
-
-
-            }
+                    sender.message(a);}
+                else
+                {System.out.println("unknown command " + opt + "'");
+                    menu();}}
             catch(IOException | LocalException ex)
-            {
-                ex.printStackTrace();
-            }
-        }
+            {ex.printStackTrace();}}
         while(!opt.equals("3"));
-
         return mes;
     }
 
     public static void menu(){
 
-        System.out.println("1. Registrar cliente");
-        System.out.println("2. Enviar mensaje");
-        System.out.println("3. salir");
-        System.out.println("4. repetir menu");
+        System.out.println("------------------------");
+        System.out.println("|1. Registrar cliente   |");
+        System.out.println("|2. Enviar mensaje      |");
+        System.out.println("|3. salir               |");
+        System.out.println("------------------------");
 
     }
 
     public static void sendMessage(BufferedReader in, Demo.CallbackSenderPrx sender) throws IOException {
-        System.out.print("Enter a message to send: ");
+        System.out.println("Ingrese el mensaje a enviar ");
         String message = in.readLine();
         String prefix = getUsernameAndHostname();
-        
+        String hostname = java.net.InetAddress.getLocalHost().getHostName();
         if (message.matches("list clients")){
             System.out.println(prefix+"/Hostnames: "+sender.listClients());
         }else if(message.startsWith("to")){
-            
+            sender.mtoX(hostname, prefix, message);
         } else if(message.startsWith("BC")) {
-            
+            sender.mBC(hostname, message);
         }
-
-
     }
+
     private static String getUsernameAndHostname() {
         String username = System.getProperty("user.name");
         String hostname = "unknown";

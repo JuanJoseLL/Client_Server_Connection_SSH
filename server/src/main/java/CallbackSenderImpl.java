@@ -14,7 +14,7 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
 
         try
         {
-            proxy.callback();
+            proxy.callback("try catch");
         }
         catch(com.zeroc.Ice.LocalException ex)
         {
@@ -50,10 +50,15 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
     }
 
     @Override
-    public void registerClients(String hostname, CallbackReceiverPrx proxy, Current current) {
+    public boolean registerClients(String hostname, CallbackReceiverPrx proxy, Current current) {
+        boolean flag= false;
         synchronized (registeredClients){
             registeredClients.put(hostname, proxy);
         }
+        if(registeredClients.get(hostname)!=null){
+            flag=true;
+        }
+        return flag;
     }
 
     @Override
@@ -69,6 +74,32 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
         return resultado.toString();
     }
 
+    @Override
+    public String mtoX(String hostnameFrom ,String hostnameTo, String message, Current current) {
+        CallbackReceiverPrx receiver = registeredClients.get(hostnameTo);
+        if(registeredClients.get(hostnameTo)==null){
+            System.out.println("hola");
+            String state="Hostname "+hostnameTo+"no esta registrado";
+           return state;
+        } else {
+            String answer = "El host "+hostnameFrom +"dice "+message;
+            return receiver.callback(answer);
+        }
+    }
 
 
-}
+    @Override
+    public String mBC(String hostnameFrom , String message,Current current) {
+        Set<String> hostnames = registeredClients.keySet();
+            String answer=" ";
+        for (String host : hostnames) {
+            CallbackReceiverPrx receiver = registeredClients.get(host);
+            answer += "El host "+hostnameFrom +"les dice"+receiver.callback(message);
+        }
+
+        return answer;
+
+    }
+
+
+    }
