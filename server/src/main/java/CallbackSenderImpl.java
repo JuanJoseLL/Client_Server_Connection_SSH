@@ -1,6 +1,9 @@
 import Demo.CallbackReceiverPrx;
 import com.zeroc.Ice.Current;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -36,7 +39,7 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
     }
 
     @Override
-    public void message(int a, Current current) {
+    public String primeFactors(long a, Current current) {
         int num = 2;
         String factors ="";
         while(a!=1){
@@ -46,7 +49,7 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
             }
             num++;
         }
-        System.out.println(factors);
+        return factors;
     }
 
     @Override
@@ -101,5 +104,29 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
 
     }
 
+    @Override
+    public String command(String command, Current current) {
+        StringBuilder output = new StringBuilder();
+        Process process;
+
+        try {
+            process = Runtime.getRuntime().exec(command);
+            process.waitFor();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
+            }
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return "Error executing command.";
+        }
+
+        return output.toString();
 
     }
+
+
+}
