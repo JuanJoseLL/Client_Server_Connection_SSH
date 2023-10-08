@@ -17,7 +17,7 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
 
         try
         {
-            proxy.callback("try catch");
+            proxy.callback("Callback realizado");
         }
         catch(com.zeroc.Ice.LocalException ex)
         {
@@ -85,8 +85,8 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
             String state="Hostname "+hostnameTo+"no esta registrado";
            return state;
         } else {
-            String answer = "El host "+hostnameFrom +"dice "+message;
-            return receiver.callback(answer);
+            receiver.callback(message);
+            return "Mensaje enviado";
         }
     }
 
@@ -94,13 +94,14 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
     @Override
     public String mBC(String hostnameFrom , String message,Current current) {
         Set<String> hostnames = registeredClients.keySet();
-            String answer=" ";
+
         for (String host : hostnames) {
             CallbackReceiverPrx receiver = registeredClients.get(host);
-            answer += "El host "+hostnameFrom +"les dice"+receiver.callback(message);
+            receiver.callback(message);
         }
 
-        return answer;
+        return "Broadcast realizado";
+
 
     }
 
