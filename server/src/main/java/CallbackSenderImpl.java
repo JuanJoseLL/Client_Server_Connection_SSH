@@ -9,6 +9,8 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 public class CallbackSenderImpl implements Demo.CallbackSender{
 
@@ -42,17 +44,27 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
     }
 
     @Override
-    public String primeFactors(long a, Current current) {
-        int num = 2;
-        String factors ="";
-        while(a!=1){
-            while (a%num==0){
-                factors+=num+", ";
-                a /= num;
+    public CompletionStage<String> primeFactorsAsync(long a, com.zeroc.Ice.Current current)
+    {
+        System.out.println("Current thread: " + Thread.currentThread().getName());
+        CompletableFuture<String> futureResult = new CompletableFuture<>();
+        final long number = a;
+        CompletableFuture.runAsync(() -> {
+            int num = 2;
+            String factors = "";
+            long temp = number;
+            while(temp != 1)
+            {
+                while (temp % num == 0)
+                {
+                    factors += num + ", ";
+                    temp /= num;
+                }
+                num++;
             }
-            num++;
-        }
-        return factors;
+            futureResult.complete(factors);
+        });
+        return futureResult;
     }
 
     @Override
@@ -82,9 +94,6 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
 
     @Override
     public void mtoX(String hostnameTo, String message, Current current) {
-        /*new Thread(()->{
-
-        }).start();*/
         CallbackReceiverPrx receiver = registeredClients.get(hostnameTo);
         if(registeredClients.get(hostnameTo)==null){
             System.out.println("nulo");
@@ -110,27 +119,33 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
 
 
     }
+
     @Override
-    public String command(String command, Current current) {
-        StringBuilder output = new StringBuilder();
-        java.lang.Process process;
-        try {
-            process = Runtime.getRuntime().exec(command);
-            process.waitFor();
+    public CompletionStage<String> commandAsync(String command, Current current) {
+            CompletableFuture<String> futureResult = new CompletableFuture<>();
+            CompletableFuture.runAsync(() -> {
+                StringBuilder output = new StringBuilder();
+                java.lang.Process process;
+                System.out.println("Current thread: " + Thread.currentThread().getName());
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                output.append(line).append("\n");
-            }
+                try {
+                    System.out.println("Current thread: " + Thread.currentThread().getName());
 
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return "Error executing command.";
+                    process = Runtime.getRuntime().exec(command);
+                    process.waitFor();
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        output.append(line).append("\n");
+                    }
+                    futureResult.complete(output.toString());
+                } catch (IOException | InterruptedException e) {
+                    futureResult.completeExceptionally(e);
+                }
+            });
+
+            return futureResult;
         }
-        return output.toString();
-
-    }
-
 
 }
