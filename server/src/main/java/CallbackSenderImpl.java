@@ -2,7 +2,10 @@ import Demo.CallbackReceiver;
 import Demo.CallbackReceiverPrx;
 import com.zeroc.Ice.*;
 import com.zeroc.Ice.Object;
-
+import org.w3c.dom.ls.LSOutput;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -39,7 +42,7 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
     }
 
     @Override
-    public void message(int a, Current current) {
+    public String primeFactors(long a, Current current) {
         int num = 2;
         String factors ="";
         while(a!=1){
@@ -49,7 +52,7 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
             }
             num++;
         }
-        System.out.println(factors);
+        return factors;
     }
 
     @Override
@@ -78,39 +81,53 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
     }
 
     @Override
-    public String mtoX(String hostnameTo, String message, Current current) {
-        new Thread(()->{
+    public void mtoX(String hostnameTo, String message, Current current) {
+        /*new Thread(()->{
 
-        }).start();
+        }).start();*/
         CallbackReceiverPrx receiver = registeredClients.get(hostnameTo);
-            String answer = message;
-            String mens="vacio";
-            if(receiver.callback(answer)==null){
+        if(registeredClients.get(hostnameTo)==null){
             System.out.println("nulo");
-            }else {
+        }else{
+            String answer = message;
+            System.out.println("entro");
+            receiver.callback(answer);
+        }
 
-                System.out.println("entro"+receiver.callback(answer));
-                 mens=receiver.callback(answer);
-            }
 
-        return mens;
     }
 
 
     @Override
-    public String mBC( String message,Current current) {
+    public void mBC( String message,Current current) {
         Set<String> hostnames = registeredClients.keySet();
-            String answer="";
         for (String host : hostnames) {
             CallbackReceiverPrx receiver = registeredClients.get(host);
-            answer += receiver.callback(message)+"\n";
+            receiver.callback(message);
         }
-        return answer;
+
+    }
+    @Override
+    public String command(String command, Current current) {
+        StringBuilder output = new StringBuilder();
+        java.lang.Process process;
+        try {
+            process = Runtime.getRuntime().exec(command);
+            process.waitFor();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
+            }
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return "Error executing command.";
+        }
+        return output.toString();
 
     }
 
-    //Threadpool
 
-
-
-    }
+}

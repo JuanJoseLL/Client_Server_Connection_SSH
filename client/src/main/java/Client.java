@@ -24,8 +24,7 @@ public class Client {
         String mes = "entro al metodo run";
         CallbackSenderPrx sender = CallbackSenderPrx.checkedCast(
                 communicator.propertyToProxy("CallbackSender.Proxy")).ice_twoway().ice_timeout(-1).ice_secure(false);
-        if(sender == null)
-        {
+        if (sender == null) {
             System.err.println("invalid proxy");
             return "invalid proxy";
         }
@@ -37,81 +36,96 @@ public class Client {
                         com.zeroc.Ice.Util.stringToIdentity("callbackReceiver")));
         java.io.BufferedReader in = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));
         String opt = null;
-        menu();
-        do
-        {
-            try
-            {
+
+        do {
+            try {
+                menu();
                 System.out.print("==> ");
                 System.out.flush();
                 opt = in.readLine();
-                if(opt == null)
-                {break;}
+                if (opt == null) {
+                    break;
+                }
 
-                if(opt.equals("1"))
-                {
+                if (opt.equals("1")) {
                     System.out.println("Registrar host");
                     System.out.println("Introduzca el nombre del host");
                     String host = in.readLine();
                     sender.registerClients(host, receiver);
-                    if(sender.registerClients(host,receiver)==true){
+                    if (sender.registerClients(host, receiver)) {
                         System.out.println("Host registrado");
-                    }else{
-                    System.out.println("Host no registrado");
-                }
-                }
-                else if(opt.equals("2"))
-                {
-                    sender.registerClients("juanjo", receiver);
-                    sender.registerClients("svak", receiver);
-                    sender.registerClients("akira", receiver);
-                    sendMessage(in, sender);
-                }
-                else if(opt.equals("3"))
-                {}
-                else if(opt.equals("4"))
-                {} else if (opt.equals("5")) {
+                    } else {
+                        System.out.println("Host no registrado");
+                    }
+                }else if (opt.equals("2")) {
+                    boolean flag = true;
+                    while (flag){
+                        System.out.println("Ingrese la instruccion o exit");
+                        String message = in.readLine();
+                        if (message.equals("exit")){
+                            flag=false;
+                        }else{
+                            sendMessage(message, sender);
+                        }
+
+                    }
+
+                }else if (opt.equals("3")) {
                     String b = in.readLine();
-                    int a = Integer.parseInt(b);
-                    sender.message(a);}
-                else
-                {System.out.println("unknown command " + opt + "'");
-                    menu();}}
+                    long a = Long.parseLong(b);
+                    System.out.println(sender.primeFactors(a));
+                }else if (opt.equals("4")) {
+
+                }else if (opt.equals("5")) {
+
+                }else
+                {
+                    System.out.println("unknown command " + opt + "'");
+                    menu();
+                }
+            }
             catch(IOException | LocalException ex)
-            {ex.printStackTrace();}}
-        while(!opt.equals("3"));
+            {
+                ex.printStackTrace();
+            }
+        }
+        while (!opt.equals("4")) ;
         return mes;
     }
+
+
 
     public static void menu(){
 
         System.out.println("------------------------");
-        System.out.println("|1. Registrar cliente   |");
-        System.out.println("|2. Enviar mensaje      |");
-        System.out.println("|3. salir               |");
+        System.out.println("|1. Registrar cliente                        |");
+        System.out.println("|2. Agregar instruccion                      |");
+        System.out.println("|3. Descomposicion numeros primos            |");
+        System.out.println("|4. salir                                    |");
         System.out.println("------------------------");
 
     }
 
-    public static void sendMessage(BufferedReader in, Demo.CallbackSenderPrx sender) throws IOException {
-        System.out.print("Enter a message to send: ");
-        String message = in.readLine();
+    public static void sendMessage(String message, Demo.CallbackSenderPrx sender) throws IOException {
         String prefix = getUsernameAndHostname();
         String hostname = java.net.InetAddress.getLocalHost().getHostName();
         if (message.matches("list clients")){
             System.out.println(prefix+"/Hostnames: "+sender.listClients());
         }else if(message.startsWith("to")){
             String[] parts=message.split(" ",3);
+            String mens=parts[2];
             String hostnameTo=parts[1];
-            hostnameTo=hostnameTo.replace(":", "");
-            String mess = parts[2];
-            System.out.println(sender.mtoX(hostnameTo, mess));
+            sender.mtoX(hostnameTo,mens);
         } else if(message.startsWith("BC")) {
-            String[] parts=message.split(" ",2);
-            String mess=parts[1];
-            System.out.println(sender.mBC(mess));
+            sender.mBC(message);
+        }else if(message.matches("list ports")){
+            System.out.println(sender.command("nmap localhost"));
+        } else if (message.matches("listifs")) {
+            System.out.println(sender.command("ifconfig"));
+        }else if(message.startsWith("!")){
+            String command = message.substring(1).trim();
+            System.out.println(sender.command(command));
         }
-
     }
 
     private static String getUsernameAndHostname() {
@@ -127,7 +141,7 @@ public class Client {
 }
 
 
-    
+
 //     //Original method to see the factorial number and write messages
 //     private static boolean sendMessage(Demo.PrinterPrx twoway, Scanner sc) {
 //         boolean flag = true;
@@ -188,7 +202,7 @@ public class Client {
 //         double averageResponseTime = (double) totalResponseTime / iterations;
 //         System.out.println("Average response time: " + averageResponseTime + " ns");
 //     }
-    
+
 //     // Test missing Rate, run multiple transactions and monitor how many fail on receipt of a successful response
 //     private static void testMissingRate(Demo.PrinterPrx twoway, Scanner sc) {
 //         System.out.print("Enter the number of iterations: ");
@@ -234,7 +248,3 @@ public class Client {
 //         List<String> unprocessedMessages = sentMessages.subList(0, unprocessedCount);
 //         System.out.println("Unprocessed rate: " + unprocessedCount + " unprocessed messages");
 //     }
-
-
-
-
