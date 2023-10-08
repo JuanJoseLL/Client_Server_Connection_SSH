@@ -4,6 +4,7 @@ module Demo
 {
     interface CallbackReceiver{
         void callback(string message);
+        int getCounter();
 
 
     }

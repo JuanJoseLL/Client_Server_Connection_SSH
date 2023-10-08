@@ -20,7 +20,7 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
 
         try
         {
-            proxy.callback("try catch");
+            proxy.callback("Callback realizado");
         }
         catch(com.zeroc.Ice.LocalException ex)
         {
@@ -104,7 +104,10 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
         for (String host : hostnames) {
             CallbackReceiverPrx receiver = registeredClients.get(host);
             receiver.callback(message);
+            System.out.println("BC realizado");
         }
+
+
 
     }
     @Override
