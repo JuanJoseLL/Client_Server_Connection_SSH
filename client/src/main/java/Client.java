@@ -65,11 +65,7 @@ public class Client {
                     sender.registerClients("juanjo", receiver);
                     sender.registerClients("svak", receiver);
                     sender.registerClients("akira", receiver);
-
                     sendMessage(in, sender);
-
-
-
                 }
                 else if(opt.equals("3"))
                 {}

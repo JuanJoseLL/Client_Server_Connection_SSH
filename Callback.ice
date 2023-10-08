@@ -3,7 +3,7 @@
 module Demo
 {
     interface CallbackReceiver{
-        string callback(string message);
+        void callback(string message);
 
 
     }
@@ -16,6 +16,7 @@ module Demo
         string listClients();
         string mtoX(string hostnameTo, string message);
         string mBC(string message);
+
     }
     interface Printer
         {

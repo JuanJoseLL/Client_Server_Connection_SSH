@@ -1,5 +1,7 @@
+import Demo.CallbackReceiver;
 import Demo.CallbackReceiverPrx;
-import com.zeroc.Ice.Current;
+import com.zeroc.Ice.*;
+import com.zeroc.Ice.Object;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,6 +10,7 @@ import java.util.Set;
 public class CallbackSenderImpl implements Demo.CallbackSender{
 
     private final Map<String, CallbackReceiverPrx> registeredClients = new HashMap<>();
+
     @Override
     public void initiateCallback(CallbackReceiverPrx proxy, Current current) {
         System.out.println("initiating callback");
@@ -76,6 +79,9 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
 
     @Override
     public String mtoX(String hostnameTo, String message, Current current) {
+        new Thread(()->{
+
+        }).start();
         CallbackReceiverPrx receiver = registeredClients.get(hostnameTo);
             String answer = message;
             String mens="vacio";
@@ -87,7 +93,7 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
                  mens=receiver.callback(answer);
             }
 
-            return mens;
+        return mens;
     }
 
 
@@ -102,6 +108,9 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
         return answer;
 
     }
+
+    //Threadpool
+
 
 
     }

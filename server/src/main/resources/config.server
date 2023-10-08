@@ -7,5 +7,5 @@ Callback.Server.Endpoints=tcp -p 9099
 #
 # Only listen on the ZeroTier's LIASOn1 interface by default.
 #
-Ice.ThreadPool.Server.Size=20
+Ice.ThreadPool.Server.Size=5
 Ice.Default.Host=localhost

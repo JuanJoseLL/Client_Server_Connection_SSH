@@ -6,7 +6,8 @@ public class CallbackReceiverImpl implements Demo.CallbackReceiver{
 
 
         @Override
-        public String callback(String message, Current current) {
-              return message;
+        public void callback(String message, Current current) {
+            System.out.println(message);
         }
+
 }
