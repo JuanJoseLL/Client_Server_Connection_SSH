@@ -15,8 +15,8 @@ module Demo
         ["amd"] string primeFactors(long a);
         bool registerClients(string a, CallbackReceiver* proxy);
         string listClients();
-        void mtoX(string hostnameTo, string message);
-        void mBC(string message);
+        ["amd"] void mtoX(string hostnameTo, string message);
+        ["amd"] void mBC(string message);
         ["amd"] string command(string command);
     }
     interface Printer

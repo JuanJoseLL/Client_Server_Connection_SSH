@@ -44,11 +44,11 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
     }
 
     @Override
-    public CompletionStage<String> primeFactorsAsync(long a, com.zeroc.Ice.Current current)
+    public CompletionStage<String> primeFactorsAsync(long a, Current current)
     {
         System.out.println("Current thread: " + Thread.currentThread().getName());
         CompletableFuture<String> futureResult = new CompletableFuture<>();
-        final long number = a;
+         long number = a;
         CompletableFuture.runAsync(() -> {
             int num = 2;
             String factors = "";
@@ -93,7 +93,10 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
     }
 
     @Override
-    public void mtoX(String hostnameTo, String message, Current current) {
+    public CompletionStage<Void> mtoXAsync(String hostnameTo, String message, Current current) {
+        CompletableFuture<Void> futureResult = new CompletableFuture<>();
+        CompletableFuture.runAsync(() -> {
+            StringBuilder output = new StringBuilder();
         CallbackReceiverPrx receiver = registeredClients.get(hostnameTo);
         if(registeredClients.get(hostnameTo)==null){
             System.out.println("nulo");
@@ -101,23 +104,29 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
             String answer = message;
             System.out.println("entro");
             receiver.callback(answer);
+
+
         }
+            futureResult.complete(null);
 
-
+        });
+     return futureResult;
     }
 
-
     @Override
-    public void mBC( String message,Current current) {
+    public CompletionStage<Void> mBCAsync(String message, Current current) {
+        CompletableFuture<Void> futureResult = new CompletableFuture<>();
+        CompletableFuture.runAsync(() -> {
+            StringBuilder output = new StringBuilder();
         Set<String> hostnames = registeredClients.keySet();
         for (String host : hostnames) {
             CallbackReceiverPrx receiver = registeredClients.get(host);
             receiver.callback(message);
             System.out.println("BC realizado");
         }
-
-
-
+            futureResult.complete(null);
+        });
+            return futureResult;
     }
 
     @Override
@@ -126,7 +135,7 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
             CompletableFuture.runAsync(() -> {
                 StringBuilder output = new StringBuilder();
                 java.lang.Process process;
-                System.out.println("Current thread: " + Thread.currentThread().getName());
+
 
                 try {
                     System.out.println("Current thread: " + Thread.currentThread().getName());
