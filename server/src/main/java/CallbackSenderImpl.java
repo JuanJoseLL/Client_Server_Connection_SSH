@@ -1,16 +1,21 @@
+import Demo.CallbackReceiver;
 import Demo.CallbackReceiverPrx;
-import com.zeroc.Ice.Current;
-
+import com.zeroc.Ice.*;
+import com.zeroc.Ice.Object;
+import org.w3c.dom.ls.LSOutput;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 public class CallbackSenderImpl implements Demo.CallbackSender{
 
     private final Map<String, CallbackReceiverPrx> registeredClients = new HashMap<>();
+
     @Override
     public void initiateCallback(CallbackReceiverPrx proxy, Current current) {
         System.out.println("initiating callback");
@@ -39,17 +44,27 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
     }
 
     @Override
-    public String primeFactors(long a, Current current) {
-        int num = 2;
-        String factors ="";
-        while(a!=1){
-            while (a%num==0){
-                factors+=num+", ";
-                a /= num;
+    public CompletionStage<String> primeFactorsAsync(long a, com.zeroc.Ice.Current current)
+    {
+        System.out.println("Current thread: " + Thread.currentThread().getName());
+        CompletableFuture<String> futureResult = new CompletableFuture<>();
+        final long number = a;
+        CompletableFuture.runAsync(() -> {
+            int num = 2;
+            String factors = "";
+            long temp = number;
+            while(temp != 1)
+            {
+                while (temp % num == 0)
+                {
+                    factors += num + ", ";
+                    temp /= num;
+                }
+                num++;
             }
-            num++;
-        }
-        return factors;
+            futureResult.complete(factors);
+        });
+        return futureResult;
     }
 
     @Override
@@ -78,56 +93,59 @@ public class CallbackSenderImpl implements Demo.CallbackSender{
     }
 
     @Override
-    public String mtoX(String hostnameFrom ,String hostnameTo, String message, Current current) {
+    public void mtoX(String hostnameTo, String message, Current current) {
         CallbackReceiverPrx receiver = registeredClients.get(hostnameTo);
         if(registeredClients.get(hostnameTo)==null){
-            System.out.println("hola");
-            String state="Hostname "+hostnameTo+"no esta registrado";
-           return state;
-        } else {
-            receiver.callback(message);
-            return "Mensaje enviado";
+            System.out.println("nulo");
+        }else{
+            String answer = message;
+            System.out.println("entro");
+            receiver.callback(answer);
         }
+
+
     }
 
 
     @Override
-    public String mBC(String hostnameFrom , String message,Current current) {
+    public void mBC( String message,Current current) {
         Set<String> hostnames = registeredClients.keySet();
-
         for (String host : hostnames) {
             CallbackReceiverPrx receiver = registeredClients.get(host);
             receiver.callback(message);
+            System.out.println("BC realizado");
         }
 
-        return "Broadcast realizado";
 
 
     }
 
     @Override
-    public String command(String command, Current current) {
-        StringBuilder output = new StringBuilder();
-        Process process;
+    public CompletionStage<String> commandAsync(String command, Current current) {
+        CompletableFuture<String> futureResult = new CompletableFuture<>();
+        CompletableFuture.runAsync(() -> {
+            StringBuilder output = new StringBuilder();
+            java.lang.Process process;
+            System.out.println("Current thread: " + Thread.currentThread().getName());
 
-        try {
-            process = Runtime.getRuntime().exec(command);
-            process.waitFor();
+            try {
+                System.out.println("Current thread: " + Thread.currentThread().getName());
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                output.append(line).append("\n");
+                process = Runtime.getRuntime().exec(command);
+                process.waitFor();
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    output.append(line).append("\n");
+                }
+                futureResult.complete(output.toString());
+            } catch (IOException | InterruptedException e) {
+                futureResult.completeExceptionally(e);
             }
+        });
 
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return "Error executing command.";
-        }
-
-        return output.toString();
-
+        return futureResult;
     }
-
 
 }

@@ -1,15 +1,21 @@
 #
 # The client reads this property to create the reference to the
-# "hello" object in the server.
+# "CallbackSender" object in the server.
 #
-CallbackSender.Proxy=callbackSender:tcp -p 9099
+CallbackSender.Proxy=callbackSender:default -h localhost -p 9099
 
 #
 # Uncomment to use the WebSocket transports instead.
 #
 #Hello.Proxy=hello:ws -p 10002:udp -p 10000:wss -p 10003
 
+#
+# The client creates one single object adapter with the name
+# "Callback.Client". The following line sets the endpoints for this
+# adapter.
+#
+#Ice.ThreadPool.Client.Size=5
+Callback.Client.Endpoints=default -h localhost
 
 # Only listen on the ZeroTier's LIASOn1 interface by default.
 #
-Ice.Default.Host=localhost

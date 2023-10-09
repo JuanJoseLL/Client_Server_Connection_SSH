@@ -42,6 +42,7 @@ public class Client {
         CallbackReceiverPrx receiver =
                 CallbackReceiverPrx.uncheckedCast(adapter.createProxy(
                         com.zeroc.Ice.Util.stringToIdentity("callbackReceiver")));
+
         java.io.BufferedReader in = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));
         String opt = null;
 
@@ -133,19 +134,18 @@ public class Client {
     }
 
     public static void sendMessage(String message, Demo.CallbackSenderPrx sender) throws IOException {
-        System.out.println("Ingrese el mensaje a enviar ");
         String prefix = getUsernameAndHostname();
         String hostname = java.net.InetAddress.getLocalHost().getHostName();
-        if (message.matches("list clients")) {
-            System.out.println(prefix + "/Hostnames: " + sender.listClients());
-        } else if (message.startsWith("to")) {
-            String[] parts = message.split(" ", 3);
-            System.out.println("from" + parts[1]);
-            System.out.println("to" + parts[2]);
-
-        } else if (message.startsWith("BC")) {
-            // sender.mBC(hostname, message);
-        } else if (message.matches("list ports")) {
+        if (message.matches("list clients")){
+            System.out.println(prefix+"/Hostnames: "+sender.listClients());
+        }else if(message.startsWith("to")){
+            String[] parts=message.split(" ",3);
+            String mens=parts[2];
+            String hostnameTo=parts[1];
+            sender.mtoX(hostnameTo,mens);
+        } else if(message.startsWith("BC")) {
+            sender.mBC(message);
+        }else if(message.matches("list ports")){
             System.out.println(sender.command("nmap localhost"));
         } else if (message.matches("listifs")) {
             System.out.println(sender.command("ifconfig"));
@@ -224,52 +224,50 @@ public class Client {
     }
 
 
-     // Unprocessed Rate, multiples transactions are sent and monitor how many are left to process
-     public static void testUnprocessedRate(Demo.CallbackSenderPrx sender, Demo.CallbackReceiverPrx receiver){
-         CountDownLatch latch = new CountDownLatch(1);
+    // Unprocessed Rate, multiples transactions are sent and monitor how many are left to process
+    public static void testUnprocessedRate(Demo.CallbackSenderPrx sender, Demo.CallbackReceiverPrx receiver){
+        CountDownLatch latch = new CountDownLatch(1);
 
-         // Register a shutdown hook to notify the latch when the program exits
-         Runtime.getRuntime().addShutdownHook(new Thread(() -> latch.countDown()));
+        // Register a shutdown hook to notify the latch when the program exits
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> latch.countDown()));
 
-         // Read the number of iterations from the user input
-         System.out.print("Enter the number of iterations: ");
-         int iterations = new java.util.Scanner(System.in).nextInt();
+        // Read the number of iterations from the user input
+        System.out.print("Enter the number of iterations: ");
+        int iterations = new java.util.Scanner(System.in).nextInt();
 
-         // Record the start time in nanoseconds
-         long start = System.nanoTime();
+        // Record the start time in nanoseconds
+        long start = System.nanoTime();
 
-         // Call the primeFactors method on the twoway proxy for each iteration
-         for(int i = 0; i < iterations; i++)
-         {
-             sender.initiateCallback(receiver);
-         }
+        // Call the primeFactors method on the twoway proxy for each iteration
+        for(int i = 0; i < iterations; i++)
+        {
+            sender.initiateCallback(receiver);
+        }
 
-         // Record the end time in nanoseconds
-         long end = System.nanoTime();
+        // Record the end time in nanoseconds
+        long end = System.nanoTime();
 
-         // Calculate and print the total time and throughput
-         long totalTime = end - start;
-         double seconds = (double)totalTime / 1000000000;
-         System.out.println("Total time for processing: " + seconds + " seconds");
-         double throughput = (double)iterations / seconds;
-         System.out.println("Throughput: " + throughput + " iterations/second");
+        // Calculate and print the total time and throughput
+        long totalTime = end - start;
+        double seconds = (double)totalTime / 1000000000;
+        System.out.println("Total time for processing: " + seconds + " seconds");
+        double throughput = (double)iterations / seconds;
+        System.out.println("Throughput: " + throughput + " iterations/second");
 
 
-         // Wait for the latch to be notified or interrupted
-         try {
-             latch.await(2L, TimeUnit.SECONDS);
-         } catch (InterruptedException e) {
-             throw new RuntimeException(e);
-         }
+        // Wait for the latch to be notified or interrupted
+        try {
+            latch.await(2L, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
-         // Calculate and print the unprocessed rate
-         int unprocessedCount = iterations - receiver.getCounter();
-         double unprocessedRate = (double)unprocessedCount / iterations;
-         System.out.println("Unprocessed rate: " + unprocessedRate);
+        // Calculate and print the unprocessed rate
+        int unprocessedCount = iterations - receiver.getCounter();
+        double unprocessedRate = (double)unprocessedCount / iterations;
+        System.out.println("Unprocessed rate: " + unprocessedRate);
 
-     }
+    }
 
 
 }
-
-

@@ -12,12 +12,12 @@ module Demo
     interface CallbackSender{
         void initiateCallback(CallbackReceiver* proxy);
         void shutdown();
-        string primeFactors(long a);
+        ["amd"] string primeFactors(long a);
         bool registerClients(string a, CallbackReceiver* proxy);
         string listClients();
-        string mtoX(string hostnameFrom, string hostnameTo, string message);
-        string mBC(string hostnameFrom,string message);
-        string command(string command);
+        void mtoX(string hostnameTo, string message);
+        void mBC(string message);
+        ["amd"] string command(string command);
     }
     interface Printer
         {
