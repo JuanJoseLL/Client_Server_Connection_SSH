@@ -7,6 +7,8 @@ public class Server
     {
         java.util.List<String> extraArgs = new java.util.ArrayList<String>();
 
+
+
         try(com.zeroc.Ice.Communicator communicator = com.zeroc.Ice.Util.initialize(args,"config.server",extraArgs))
         {
             if(!extraArgs.isEmpty())
@@ -23,12 +25,11 @@ public class Server
                 communicator.waitForShutdown();
             }
 
-            com.zeroc.Ice.ObjectAdapter adapter = communicator.createObjectAdapter("Printer");
+           /** com.zeroc.Ice.ObjectAdapter adapter = communicator.createObjectAdapter("Printer");
             com.zeroc.Ice.Object object = new PrinterI();
             adapter.add(object, com.zeroc.Ice.Util.stringToIdentity("SimplePrinter"));
             adapter.activate();
-            communicator.waitForShutdown();
+            communicator.waitForShutdown();*/
         }
     }
-
 }

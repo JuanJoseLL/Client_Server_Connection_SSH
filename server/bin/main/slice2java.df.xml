@@ -1,0 +1,18 @@
+<state>
+  <timestamp value='1696269228576' />
+  <sourceSet name='default'>
+    <source name='/Users/juanjose/Documents/Semestre5/Ingesoft/helloworld-ciclo-kbd-JUANJOSELOPEZ1-SARACARDONA2/Callback.ice'>
+      <file name='/Users/juanjose/Documents/Semestre5/Ingesoft/helloworld-ciclo-kbd-JUANJOSELOPEZ1-SARACARDONA2/server/build/generated-src/Demo/CallbackReceiver.java' />
+      <file name='/Users/juanjose/Documents/Semestre5/Ingesoft/helloworld-ciclo-kbd-JUANJOSELOPEZ1-SARACARDONA2/server/build/generated-src/Demo/CallbackSender.java' />
+      <file name='/Users/juanjose/Documents/Semestre5/Ingesoft/helloworld-ciclo-kbd-JUANJOSELOPEZ1-SARACARDONA2/server/build/generated-src/Demo/Printer.java' />
+      <file name='/Users/juanjose/Documents/Semestre5/Ingesoft/helloworld-ciclo-kbd-JUANJOSELOPEZ1-SARACARDONA2/server/build/generated-src/Demo/CallbackReceiverPrx.java' />
+      <file name='/Users/juanjose/Documents/Semestre5/Ingesoft/helloworld-ciclo-kbd-JUANJOSELOPEZ1-SARACARDONA2/server/build/generated-src/Demo/_CallbackReceiverPrxI.java' />
+      <file name='/Users/juanjose/Documents/Semestre5/Ingesoft/helloworld-ciclo-kbd-JUANJOSELOPEZ1-SARACARDONA2/server/build/generated-src/Demo/CallbackSenderPrx.java' />
+      <file name='/Users/juanjose/Documents/Semestre5/Ingesoft/helloworld-ciclo-kbd-JUANJOSELOPEZ1-SARACARDONA2/server/build/generated-src/Demo/_CallbackSenderPrxI.java' />
+      <file name='/Users/juanjose/Documents/Semestre5/Ingesoft/helloworld-ciclo-kbd-JUANJOSELOPEZ1-SARACARDONA2/server/build/generated-src/Demo/PrinterPrx.java' />
+      <file name='/Users/juanjose/Documents/Semestre5/Ingesoft/helloworld-ciclo-kbd-JUANJOSELOPEZ1-SARACARDONA2/server/build/generated-src/Demo/_PrinterPrxI.java' />
+    </source>
+    <arg value='/usr/local/bin/slice2java' />
+    <arg value='-I/usr/local/share/ice/slice' />
+  </sourceSet>
+</state>
